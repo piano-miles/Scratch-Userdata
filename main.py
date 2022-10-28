@@ -2,8 +2,7 @@ import os  # Operating System
 import requests  # Handle API requests
 import json  # Read JSON data
 
-print("----------------")
-
+print("\n"*5+"----------------")
 
 def printl(label, data):
     print("\n"+label+":")
