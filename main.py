@@ -1,8 +1,10 @@
 import os  # Operating System
 import requests  # Handle API requests
 import json  # Read JSON data
+import pprint  # Prints the json in a more friendly fashion
 
 print("\n"*5+"----------------")
+
 
 def printl(label, data):
     print("\n"+label+":")
@@ -27,7 +29,7 @@ def jget(url, log):
         if sc == 200:
             if log:
                 print("Result returned successfully.")
-            return response.json()
+            return json.loads(jdump(response.json()))
         elif log:
             if sc == 301:
                 print("The server is redirecting you to a different endpoint.")
@@ -47,55 +49,100 @@ def jget(url, log):
             quit()
 
 
-featured = jget("https://api.scratch.mit.edu/proxy/featured", True)  # Featured
+# featured = jget("https://api.scratch.mit.edu/proxy/featured", True)  # Featured
 # explore = jget("https://api.scratch.mit.edu/explore/projects?q=games&mode=trending&language=en", True) #Trending explore
 
 # print(response.json())
 # print(jdump(response.json()))
 
+header = "User,Project,,Stats,,,Remix Tree,,,Other,,,,\nUsername,Title,Project ID,Views,Loves,Favorites,Remixes,Parent,Root,Public,Published,Visible,Creation Date,Commentable"
 
-for p in featured['community_featured_projects']:
-    if p['type'] == "project":
-        creator = p['creator']
-        project_id = p['id']
-        project_title = p['title']
-        loves = p['love_count']
+# https://api.scratch.mit.edu/users/mres/messages/count
+# https://api.scratch.mit.edu/users/mres/projects
 
-        printl("creator",       creator)
-        printl("project_id",    project_id)
-        printl("project_title", project_title)
-        printl("loves",         loves)
+username = "mres"
 
-        # Creator info
-        q = "https://api.scratch.mit.edu/users/"+creator
-        printl("user_info <- GET", q)
-        user_info = jget(q, False)
-        printl("user_info", user_info)
+sample = jget("https://api.scratch.mit.edu/users/" +
+              username+"/projects", True)  # A user
 
-        # Favorited projects
-        # "https://api.scratch.mit.edu/users/"+creator+"/favorites"
+i = 0
+project = sample[i]
 
-        # Followers
-        q = "https://api.scratch.mit.edu/users/"+creator+"/followers"
-        printl("followers <- GET", q)
-        followers = jget(q, False)
-        printl("followers", followers)
+title = project["title"]
+projectID = project["id"]
+views = project["stats"]["views"]
+loves = project["stats"]["loves"]
+favorites = project["stats"]["favorites"]
+remixes = project["stats"]["remixes"]
+parent = project["remix"]["parent"]
+root = project["remix"]["root"]
+public = project["public"]
+published = project["is_published"]
+visible = project["visibility"]
+creationDate = project["history"]["created"]
+commentable = project["comments_allowed"]
 
-        # Following
-        # "https://api.scratch.mit.edu/users/"+creator+"/following"
+print(i)
+print(username)
+print(title)
+print(projectID)
+print(views)
+print(loves)
+print(favorites)
+print(remixes)
+print(parent)
+print(root)
+print(public)
+print(published)
+print(visible)
+print(creationDate)
+print(commentable)
 
-        # Unread messages
-        # "https://api.scratch.mit.edu/users/"+creator+"/messages/count"
+# pprint.pprint(sample)
 
-        # Projects
-        # "https://api.scratch.mit.edu/users/"+creator+"/projects"
+if (False):
+    for p in featured['community_featured_projects']:
+        if p['type'] == "project":
+            creator = p['creator']
+            project_id = p['id']
+            project_title = p['title']
+            loves = p['love_count']
 
-        # Project Info
-        # "https://api.scratch.mit.edu/users/"+creator+"/projects/"+project_id
+            printl("creator",       creator)
+            printl("project_id",    project_id)
+            printl("project_title", project_title)
+            printl("loves",         loves)
 
-        # Project Comments
-        # "https://api.scratch.mit.edu/users/"+creator+"/projects/"+project_id+"/comments"
+            # Creator info
+            q = "https://api.scratch.mit.edu/users/"+creator
+            printl("user_info <- GET", q)
+            user_info = jget(q, False)
+            printl("user_info", user_info)
 
-        quit()
+            # Favorited projects
+            # "https://api.scratch.mit.edu/users/"+creator+"/favorites"
 
-    # print(jdump(pass_times))
+            # Followers
+            q = "https://api.scratch.mit.edu/users/"+creator+"/followers"
+            printl("followers <- GET", q)
+            followers = jget(q, False)
+            printl("followers", followers)
+
+            # Following
+            # "https://api.scratch.mit.edu/users/"+creator+"/following"
+
+            # Unread messages
+            # "https://api.scratch.mit.edu/users/"+creator+"/messages/count"
+
+            # Projects
+            # "https://api.scratch.mit.edu/users/"+creator+"/projects"
+
+            # Project Info
+            # "https://api.scratch.mit.edu/users/"+creator+"/projects/"+project_id
+
+            # Project Comments
+            # "https://api.scratch.mit.edu/users/"+creator+"/projects/"+project_id+"/comments"
+
+            quit()
+
+        # print(jdump(pass_times))
