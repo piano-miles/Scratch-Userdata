@@ -8,6 +8,7 @@ follows = ["424056","92980","81893","81613","59037","58449","58280","49834","439
 
 print("Starting")
 
+
 def printl(label, data):
     print("\n"+label+":")
     print(data)
@@ -58,7 +59,7 @@ def jget(url, log):
 # print(jdump(response.json()))
 
 header = "User,,,,Average Project Statistics,,,,,,,\nUsername,Followers,Country,Join Date,Views,Loves,Favorites,Remixes,Public,Published,Visible,Commentable\n"
-data = header # format ex: "piano_miles,1000,United States,2018-08-24,1000,200,100,50,1,1,1,1\n"
+data = header  # format ex: "piano_miles,1000,United States,2018-08-24,1000,200,100,50,1,1,1,1\n"
 
 # https://api.scratch.mit.edu/users/mres/messages/count
 # https://api.scratch.mit.edu/users/mres/projects
@@ -78,17 +79,19 @@ for K in range(len(follows)):
             fcount = 20
             followers = [" "] * 20
             while len(followers) > 19:
-                followers = jget("https://api.scratch.mit.edu/users/"+username+"/following?offset="+str(offset), True)
+                followers = jget("https://api.scratch.mit.edu/users/" +
+                                 username+"/following?offset="+str(offset), True)
                 followerc += len(followers)
                 offset += 1
                 print("Batch: " + str(len(followers)) + "\n")
-            #print(user)
+            # print(user)
             print("Followers: " + str(followerc))
-        
+
         country = user["profile"]["country"]
         joinDate = user["history"]["joined"].split("T")[0]
 
-        sample = jget("https://api.scratch.mit.edu/users/" +username+ "/projects", False)  # A user
+        sample = jget("https://api.scratch.mit.edu/users/" +
+                      username + "/projects", False)  # A user
 
         views = 0
         loves = 0
@@ -100,7 +103,7 @@ for K in range(len(follows)):
         commentable = 0
         count = 0
 
-        for i in range(5):
+        for i in range(len(sample)):
             project = sample[i]
 
             #title = project["title"]
@@ -117,37 +120,41 @@ for K in range(len(follows)):
             #creationDate = project["history"]["created"]
             commentable += 1 if project["comments_allowed"] else 0
 
+            # throw out data not accessable to the public
             if project["public"] and project["is_published"] and project["visibility"] == "visible":
                 count += 1
 
-        views = str(views/count)
-        loves = str(loves/count)
-        favorites = str(favorites/count)
-        remixes = str(remixes/count)
-        public = str(public/count)
-        published = str(published/count)
-        visible = str(visible/count)
-        commentable = str(commentable/count)
+        if count > 0:
+            views = str(views/count)
+            loves = str(loves/count)
+            favorites = str(favorites/count)
+            remixes = str(remixes/count)
+            public = str(public/count)
+            published = str(published/count)
+            visible = str(visible/count)
+            commentable = str(commentable/count)
 
-        if False:
-            print(i)
-            print("count: " + str(count))
-            print("username: " + username)
-            # print(title)
-            # print(projectID)
-            print("views: " + views)
-            print("loves: " + loves)
-            print("favorites: " + favorites)
-            print("remixes: " + remixes)
-            # print(parent)
-            # print(root)
-            print("public: " + public)
-            print("published: " + published)
-            print("visible: " + visible)
-            # print(creationDate)
-            print("commentable: " + commentable)
+            if False:
+                print(i)
+                print("count: " + str(count))
+                print("username: " + username)
+                # print(title)
+                # print(projectID)
+                print("views: " + views)
+                print("loves: " + loves)
+                print("favorites: " + favorites)
+                print("remixes: " + remixes)
+                # print(parent)
+                # print(root)
+                print("public: " + public)
+                print("published: " + published)
+                print("visible: " + visible)
+                # print(creationDate)
+                print("commentable: " + commentable)
 
-        data += username+","+follows[K].strip()+","+country+","+joinDate+","+views+","+loves+","+favorites+","+remixes+","+public+","+published+","+visible+","+commentable+"\n"
+            data += username+","+follows[K].strip()+","+country+","+joinDate+","+views+","+loves + \
+                ","+favorites+","+remixes+","+public+"," + \
+                published+","+visible+","+commentable+"\n"
         # print(data)
         # print(remixes)
         # print(commentable)
