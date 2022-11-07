@@ -60,43 +60,92 @@ header = "User,Project,,Stats,,,Remix Tree,,,Other,,,,\nUsername,Title,Project I
 # https://api.scratch.mit.edu/users/mres/messages/count
 # https://api.scratch.mit.edu/users/mres/projects
 
-username = "mres"
+username = "Geotale"
 
-sample = jget("https://api.scratch.mit.edu/users/" +
-              username+"/projects", True)  # A user
+valid = jget(
+    "https://api.scratch.mit.edu/accounts/checkusername/"+username, False)["msg"] == "username exists"
 
-i = 0
-project = sample[i]
+if valid:
+    user = jget("https://api.scratch.mit.edu/users/Geotale", True)
+    if False:
+        offset = 0
+        followerc = 0
+        fcount = 20
+        followers = [" "] * 20
+        while len(followers) > 19:
+            followers = jget("https://api.scratch.mit.edu/users/Geotale/following?offset="+str(offset), True)
+            followerc += len(followers)
+            offset += 1
+            print("Batch: " + str(len(followers)) + "\n")
+        #print(user)
+        print("Followers: " + str(followerc))
+    
+    country = user["profile"]["country"]
+    creation = user["history"]["joined"]
+    print(country)
+    print(creation)
 
-title = project["title"]
-projectID = project["id"]
-views = project["stats"]["views"]
-loves = project["stats"]["loves"]
-favorites = project["stats"]["favorites"]
-remixes = project["stats"]["remixes"]
-parent = project["remix"]["parent"]
-root = project["remix"]["root"]
-public = project["public"]
-published = project["is_published"]
-visible = project["visibility"]
-creationDate = project["history"]["created"]
-commentable = project["comments_allowed"]
+if False: # if valid
+    sample = jget("https://api.scratch.mit.edu/users/" +
+                  username+"/projects", True)  # A user
 
-print(i)
-print(username)
-print(title)
-print(projectID)
-print(views)
-print(loves)
-print(favorites)
-print(remixes)
-print(parent)
-print(root)
-print(public)
-print(published)
-print(visible)
-print(creationDate)
-print(commentable)
+    views = 0
+    loves = 0
+    favorites = 0
+    remixes = 0
+    public = 0
+    published = 0
+    visible = 0
+    commentable = 0
+
+    count = 0
+
+    for i in range(len(sample)):
+        project = sample[i]
+
+        #title = project["title"]
+        #projectID = project["id"]
+        views += project["stats"]["views"]
+        loves += project["stats"]["loves"]
+        favorites += project["stats"]["favorites"]
+        remixes += project["stats"]["remixes"]
+        #parent = project["remix"]["parent"]
+        #root = project["remix"]["root"]
+        public += 1 if project["public"] else 0
+        published += 1 if project["is_published"] else 0
+        visible += 1 if project["visibility"] == "visible" else 0
+        #creationDate = project["history"]["created"]
+        commentable += 1 if project["comments_allowed"] else 0
+
+        if project["public"] and project["is_published"] and project["visibility"] == "visible":
+            count += 1
+
+    views = str(views/count)
+    loves = str(loves/count)
+    favorites = str(favorites/count)
+    remixes = str(remixes/count)
+    public = str(public/count)
+    published = str(published/count)
+    visible = str(visible/count)
+    commentable = str(commentable/count)
+
+    if True:
+        print(i)
+        print("count: " + str(count))
+        print("username: " + username)
+        # print(title)
+        # print(projectID)
+        print("views: " + views)
+        print("loves: " + loves)
+        print("favorites: " + favorites)
+        print("remixes: " + remixes)
+        # print(parent)
+        # print(root)
+        print("public: " + public)
+        print("published: " + published)
+        print("visible: " + visible)
+        # print(creationDate)
+        print("commentable: " + commentable)
 
 # pprint.pprint(sample)
 
