@@ -4,4 +4,4 @@ This is a Python program to collect data about Scratch projects and users. It is
 
 - Currently, the main code is in `main.ipynb`. The code is not yet complete.
 - A web version is also currently undergoing development.
-- `base.py` and `minibase.py` are the old programs from version 1.0.1.
+- `base.py` and `minibase.py` are the old programs from version `1.0.1`.
