@@ -1,0 +1,22 @@
+@import "https://pyscript.net/alpha/pyscript.css";
+
+.container {
+    margin: auto;
+    padding: 16px;
+}
+
+.t1 {
+    margin: auto;
+    width: auto;
+    border: 3px solid green;
+    padding: 16px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.terminal {
+    margin: auto;
+    width: auto;
+    border: 3px solid blueviolet;
+    padding: 16px;
+}
