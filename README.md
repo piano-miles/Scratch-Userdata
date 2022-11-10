@@ -1,7 +1,7 @@
 # Scratch-API
 
-A Python script to collect data about Scratch projects and users.
+This is a Python program to collect data about Scratch projects and users. It is for my Statistics project.
 
-- Run `mini.py` to collect data, which will be written to `dataset.csv`.
-
-- `main.py` is the larger and more readible version of the script.
+- Currently, the main code is in `main.ipynb`. The code is not yet complete.
+- A web version is also currently undergoing development.
+- `base.py` and `minibase.py` are the old programs from version 1.0.1.
