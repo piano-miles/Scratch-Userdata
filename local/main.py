@@ -4,6 +4,7 @@ import time
 from tqdm import tqdm
 import threading
 from math import *
+import os
 
 
 def jdump(obj): return json.dumps(obj, sort_keys=True, indent=4)
@@ -54,6 +55,10 @@ def jget(url, i):
             print('URL: '+url)
             quit()
 
+
+print('Initial working directory: ', os.getcwd())
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+print('New working directory: ', os.getcwd())
 
 print('Reading users.json')
 f = open('../json/users.json')
