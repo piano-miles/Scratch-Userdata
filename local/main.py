@@ -4,12 +4,13 @@ import time
 from tqdm import tqdm
 import threading
 from math import *
+
+
 def jdump(obj): return json.dumps(obj, sort_keys=True, indent=4)
 
 
 def jget(url, i):
     response = ''
-
     try:
         response = requests.get(url)
 
@@ -60,7 +61,6 @@ users_info = json.load(f)
 usernames = users_info['usernames']
 follows = users_info['follows']
 f.close()
-
 c = len(follows)
 userData = []
 sampleData = []
@@ -80,7 +80,7 @@ def col(K):
 
         while projects > 39:
             i = batch | K << 10
-            userData.append((i, user))
+            userData.append((i, user, follows[K]))
             sample = jget('https://api.scratch.mit.edu/users/' +
                           username+'/projects?limit=40&offset='+str(off), 0)
             sampleData.append((i, sample))
@@ -89,33 +89,30 @@ def col(K):
             batch += 1
 
 
-print('Collecting Data')
+print('Creating Threads')
 for K in tqdm(range(c)):
     t = threading.Thread(target=col, args=(K,))
     t.start()
     threads.append(t)
 
-print('Consolidating Threads')
+print('Joining Threads')
 for t in tqdm(threads):
     t.join()
-
 print('Data Collected.')
 
 userData = sorted(userData, key=lambda D: D[0])
 sampleData = sorted(sampleData, key=lambda D: D[0])
 for K in range(len(userData)):
-    userData[K] = userData[K][1]
+    userData[K] = userData[K][1], userData[K][2]
 for K in range(len(sampleData)):
     sampleData[K] = sampleData[K][1]
-print('Sorted Data')
+print('Sorted Threads')
 
 data = 'User,,,,Average Project Statistics,,,,,,,\nUsername,Followers,Country,Join Date,Views,Loves,Favorites,Remixes,Public,Published,Visible,Commentable,Projects\n'
 
 print('--  Parsing data  --')
 user = []
-pusr = []
 sample = []
-
 views = 0
 loves = 0
 favorites = 0
@@ -126,17 +123,19 @@ visible = 0
 commentable = 0
 count = 0
 projects = ''
-username = userData[0]['username']
+username = userData[0][0]['username']
+pusr = username
 country = ''
 joinDate = ''
 
 samples = len(userData)
 for K in tqdm(range(samples+1)):
     if K < samples:
-        user = userData[K]
+        user = userData[K][0]
         pusr = username
         username = user['username']
         sample = sampleData[K]
+
     else:
         username = pusr+'a'
 
@@ -150,7 +149,9 @@ for K in tqdm(range(samples+1)):
         visible = str(visible)
         commentable = str(commentable)
 
-        data += pusr+','+follows[K].strip()+','+country+','+joinDate+','+views+','+loves+',' + \
+        if country is None:
+            country = ''
+        data += pusr+','+str(userData[K-1][1])+','+country+','+joinDate+','+views+','+loves+',' + \
             favorites+','+remixes+','+public+','+published + \
             ','+visible+','+commentable+','+projects+'\n'
 
@@ -186,7 +187,6 @@ for K in tqdm(range(samples+1)):
 
     projects = str(count)
 
-print("Writing Data")
 f = open('dataset.csv', 'w')
 f.write(data)
 f.close()
