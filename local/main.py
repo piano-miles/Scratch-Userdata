@@ -54,43 +54,67 @@ def jget(url, i):
             quit()
 
 
+print('Reading users.json')
 f = open('../json/users.json')
 users_info = json.load(f)
 usernames = users_info['usernames']
 follows = users_info['follows']
 f.close()
+c = len(follows)
 userData = []
 sampleData = []
+threads = []
 
 
 def col(K):
+    batch = 0
     username = usernames[K]
     valid = jget('https://api.scratch.mit.edu/accounts/checkusername/' +
                  username, 0)['msg'] == 'username exists'
+
     if valid:
         user = jget('https://api.scratch.mit.edu/users/'+username, 0)
         projects = 40
         off = 0
+
         while projects > 39:
-            userData.append(user)
+            i = batch | K << 10
+            userData.append((i, user))
             sample = jget('https://api.scratch.mit.edu/users/' +
                           username+'/projects?limit=40&offset='+str(off), 0)
-            sampleData.append(sample)
+            sampleData.append((i, sample))
             projects = len(sample)
             off += 40
+            batch += 1
 
 
-c = len(follows)
+print('Collecting Data')
 for K in tqdm(range(c)):
-    col(K)
-print('Data collected.')
+    t = threading.Thread(target=col, args=(K,))
+    t.start()
+    threads.append(t)
+
+print('Consolidating Threads')
+for t in tqdm(threads):
+    t.join()
+
+print('Data Collected.')
+
+userData = sorted(userData, key=lambda D: D[0])
+sampleData = sorted(sampleData, key=lambda D: D[0])
+for K in range(len(userData)):
+    userData[K] = userData[K][1]
+for K in range(len(sampleData)):
+    sampleData[K] = sampleData[K][1]
+print('Sorted Data')
 
 data = 'User,,,,Average Project Statistics,,,,,,,\nUsername,Followers,Country,Join Date,Views,Loves,Favorites,Remixes,Public,Published,Visible,Commentable,Projects\n'
-print('--  Parsing data  --')
 
+print('--  Parsing data  --')
 user = []
 pusr = []
 sample = []
+
 views = 0
 loves = 0
 favorites = 0
@@ -104,15 +128,14 @@ projects = ''
 username = userData[0]['username']
 country = ''
 joinDate = ''
-samples = len(userData)
 
+samples = len(userData)
 for K in tqdm(range(samples+1)):
     if K < samples:
         user = userData[K]
         pusr = username
         username = user['username']
         sample = sampleData[K]
-
     else:
         username = pusr+'a'
 
@@ -125,6 +148,7 @@ for K in tqdm(range(samples+1)):
         published = str(published)
         visible = str(visible)
         commentable = str(commentable)
+
         data += pusr+','+follows[K].strip()+','+country+','+joinDate+','+views+','+loves+',' + \
             favorites+','+remixes+','+public+','+published + \
             ','+visible+','+commentable+','+projects+'\n'
@@ -161,7 +185,8 @@ for K in tqdm(range(samples+1)):
 
     projects = str(count)
 
+print("Writing Data")
 f = open('dataset.csv', 'w')
 f.write(data)
 f.close()
-print('File written to dataset.csv.')
+print('File written to dataset.csv.\nDone.')
