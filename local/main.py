@@ -60,6 +60,7 @@ users_info = json.load(f)
 usernames = users_info['usernames']
 follows = users_info['follows']
 f.close()
+
 c = len(follows)
 userData = []
 sampleData = []
