@@ -78,6 +78,7 @@ c = len(follows)
 userData = []
 sampleData = []
 
+
 def col(K):
     batch = 0
     username = usernames[K]
@@ -100,12 +101,13 @@ def col(K):
             batch += 1
 
 
-print('Creating ' + c + 'Threads')
+print('Creating ' + str(c) + 'Threads')
+c = int(c*0.1)
 for L in range(10):
-    print("-- Thread Batch " + L + "/10 --")
+    print("-- Thread Batch " + str(L+1) + "/10 --")
     threads = []
-    for K in tqdm(range(c/10)):
-        t = threading.Thread(target=col, args=(K + L,))
+    for K in tqdm(range(c)):
+        t = threading.Thread(target=col, args=(K + L*c,))
         t.start()
         threads.append(t)
 
