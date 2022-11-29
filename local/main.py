@@ -1,10 +1,18 @@
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import json
 import time
 from tqdm import tqdm
 import threading
 from math import *
 import os
+
+session = requests.Session()
+C = Retry(connect=3, backoff_factor=0.5)
+B = HTTPAdapter(max_retries=C)
+session.mount('http://', B)
+session.mount('https://', B)
 
 
 def jdump(obj): return json.dumps(obj, sort_keys=True, indent=4)
@@ -13,10 +21,10 @@ def jdump(obj): return json.dumps(obj, sort_keys=True, indent=4)
 def jget(url, i):
     response = ''
     try:
-        response = requests.get(url)
+        response = session.get(url)
 
     except Exception as e:
-        print('ERR: jget requests.get failed.')
+        print('ERR: jget session.get failed.')
         print('If you are using an internet connection provided by a school or organization with heavy internet traffic control, that may be why. :)')
         print('Exception: '+str(e))
         print('Attmpt '+str(i))
