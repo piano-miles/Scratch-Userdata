@@ -5,7 +5,6 @@ import json
 import time
 from tqdm import tqdm
 import threading
-from math import *
 import os
 from sys import platform
 
