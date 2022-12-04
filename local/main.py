@@ -15,7 +15,8 @@ session.mount('http://', B)
 session.mount('https://', B)
 
 
-def jdump(obj): return json.dumps(obj, sort_keys=True, indent=4)
+def jdump(obj):
+    return json.dumps(obj, sort_keys=True, indent=4)
 
 
 def jget(url, i):
@@ -25,10 +26,12 @@ def jget(url, i):
 
     except Exception as e:
         print('ERR: jget session.get failed.')
-        print('If you are using an internet connection provided by a school or organization with heavy internet traffic control, that may be why. :)')
-        print('Exception: '+str(e))
-        print('Attmpt '+str(i))
-        print('url: '+url)
+        print(
+            'If you are using an internet connection provided by a school or organization with heavy internet traffic control, that may be why. :)'
+        )
+        print('Exception: ' + str(e))
+        print('Attmpt ' + str(i))
+        print('url: ' + url)
         quit()
 
     else:
@@ -36,32 +39,39 @@ def jget(url, i):
             return json.loads(jdump(response.json()))
 
         elif i < 10:
-            print(str(response.status_code) +
-                  '; Failed to fetch data, trying again in one second.')
+            print(
+                str(response.status_code) +
+                '; Failed to fetch data, trying again in one second.')
             time.sleep(1)
-            jget(url, i+1)
+            jget(url, i + 1)
 
         else:
             sc = response.status_code
             print('Attempted to get data 10 times, failed.')
-            print('Error code: '+str(sc)+'.')
+            print('Error code: ' + str(sc) + '.')
             if sc == 301:
                 print('The server is redirecting you to a different endpoint.')
             elif sc == 400:
-                print('The server thinks you made a bad request. Incorrect credentials.')
+                print(
+                    'The server thinks you made a bad request. Incorrect credentials.'
+                )
             elif sc == 401:
                 print('The server thinks you’re not authenticated.')
             elif sc == 403:
                 print(
-                    'The resource you’re trying to access is forbidden. You do not have the right permissions.')
+                    'The resource you’re trying to access is forbidden. You do not have the right permissions.'
+                )
             elif sc == 404:
-                print('The resource you tried to access wasn’t found on the server.')
+                print(
+                    'The resource you tried to access wasn’t found on the server.'
+                )
             elif sc == 503:
                 print('The server is not ready to handle the request.')
             else:
                 print('Unknown error type.')
-            print('URL: '+url)
+            print('URL: ' + url)
             quit()
+
 
 if platform == "linux" or platform == "linux2":
     print("Running on Linux.")
@@ -88,19 +98,21 @@ sampleData = []
 def col(K):
     batch = 0
     username = usernames[K]
-    valid = jget('https://api.scratch.mit.edu/accounts/checkusername/' +
-                 username, 0)['msg'] == 'username exists'
+    valid = jget(
+        'https://api.scratch.mit.edu/accounts/checkusername/' + username,
+        0)['msg'] == 'username exists'
 
     if valid:
-        user = jget('https://api.scratch.mit.edu/users/'+username, 0)
+        user = jget('https://api.scratch.mit.edu/users/' + username, 0)
         projects = 40
         off = 0
 
         while projects > 39:
             i = batch | K << 10
             userData.append((i, user, follows[K]))
-            sample = jget('https://api.scratch.mit.edu/users/' +
-                          username+'/projects?limit=40&offset='+str(off), 0)
+            sample = jget(
+                'https://api.scratch.mit.edu/users/' + username +
+                '/projects?limit=40&offset=' + str(off), 0)
             sampleData.append((i, sample))
             projects = len(sample)
             off += 40
@@ -108,12 +120,12 @@ def col(K):
 
 
 print('Creating ' + str(c) + ' Threads')
-c = int(c*0.1)
+c = int(c * 0.1)
 for L in range(10):
-    print("-- Thread Batch " + str(L+1) + "/10 --")
+    print("-- Thread Batch " + str(L + 1) + "/10 --")
     threads = []
     for K in tqdm(range(c)):
-        t = threading.Thread(target=col, args=(K + L*c,))
+        t = threading.Thread(target=col, args=(K + L * c, ))
         t.start()
         threads.append(t)
 
@@ -152,7 +164,7 @@ country = ''
 joinDate = ''
 
 samples = len(userData)
-for K in tqdm(range(samples+1)):
+for K in tqdm(range(samples + 1)):
     if K < samples:
         user = userData[K][0]
         pusr = username
@@ -160,7 +172,7 @@ for K in tqdm(range(samples+1)):
         sample = sampleData[K]
 
     else:
-        username = pusr+'a'
+        username = pusr + 'a'
 
     if not pusr == username:
         views = str(views)
@@ -200,10 +212,10 @@ for K in tqdm(range(samples+1)):
         loves += project['stats']['loves']
         favorites += project['stats']['favorites']
         remixes += project['stats']['remixes']
-        public += 1 if project['public']else 0
-        published += 1 if project['is_published']else 0
-        visible += 1 if project['visibility'] == 'visible'else 0
-        commentable += 1 if project['comments_allowed']else 0
+        public += 1 if project['public'] else 0
+        published += 1 if project['is_published'] else 0
+        visible += 1 if project['visibility'] == 'visible' else 0
+        commentable += 1 if project['comments_allowed'] else 0
 
         if project['public'] and project['is_published'] and project['visibility'] == 'visible':
             count += 1
