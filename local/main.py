@@ -7,6 +7,7 @@ from tqdm import tqdm
 import threading
 from math import *
 import os
+from sys import platform
 
 session = requests.Session()
 C = Retry(connect=3, backoff_factor=0.5)
@@ -63,6 +64,12 @@ def jget(url, i):
             print('URL: '+url)
             quit()
 
+if platform == "linux" or platform == "linux2":
+    print("Running on Linux.")
+elif platform == "darwin":
+    print("Running on MacOS.")
+elif platform == "win32":
+    print("Running on Windows.")
 
 print('Initial working directory: ', os.getcwd())
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
