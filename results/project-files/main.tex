@@ -141,10 +141,10 @@
 	\newpage
 	The data in the original scatter plot is highly concentrated in the bottom-left corner of the graph (a right skew in the distribution for loves/views and an even heavier right skew in the distribution for follows). I, therefore, chose to re-express the data by taking the log of both distributions in an attempt to make the distributions more uniform. The equation of the regression line is log(predicted loves/views) = –0.0364 log(follows) – 1.05. The slope is -0.0364, meaning that the love/view ratio will tend to decrease by $1-10^{-0.0364}=$ 8.03978…\% for a 10-fold increase in follower count, according to the model. The y-intercept is -1.05, meaning the love-to-view ratio is approximately $10^{-1.05}=$ 8.9125…\% when the follower count is 1, according to the model.
 	
-	The $R^2$ value is extremely low, at just 0.001. That means that only about 0.1\% of the variation in log(loves/views) can be attributed to log(follows) in the model. The residual plot is also not uniformly distributed, so there may be some other more complex association between the parameters.
+	The $R^2$ value is extremely low, at just 0.001. That means that only about 0.1\% of the variation in log(loves/views) can be attributed to log(follows) in the model. The residual plot is also not uniformly distributed, so there may be some other more complex association between the parameters that is outside the scope of the AP Statistics course.
 	
 	% Conclusion
-	In conclusion, there is little association between a Scratcher’s popularity (measured by follower count) and the ratio between the number of loves and views they receive. The $R^2$ value of 0.1\% means that only about 0.1\% of the variation in log(loves/views) is accounted for by the model, which is statistically insignificant. There also appears to be little association between the two parameters, visually.
+	In conclusion, there is little clear association between a Scratcher’s popularity (measured by follower count) and the ratio between the number of loves and views they receive. The $R^2$ value of 0.1\% means that only about 0.1\% of the variation in log(loves/views) is accounted for by the model, which is statistically insignificant. There also appears to be little association between the two parameters, visually.
 	
 \end{flushleft}
 \end{document}
