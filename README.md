@@ -16,6 +16,8 @@ To install the required dependencies, run `python3 -m pip install tqdm requests`
 
 ## Other Files
 
-Results and analysis are included in `./results`. The `./results/project data` folder contains the complete collected raw data with some extra columns for analysis, and the `report` folder contains the visual files in my final report.
+Results and analysis are included in the `./results` folder. 
+ - The `./results/project data` folder contains the collected raw data with some extra columns for analysis, and it also contains the LaTeX code and PDF for the paper writeup.
+ - The `./results/final-report` folder contains the PDFs for my final report (the project data and writeup).
 
-The web version is currently broken, because pyodide has issues loading external files into the virtual file system. For the time being, you will have to run the local script.
+The web version does not work, because pyodide has issues loading external files into the virtual file system. To collect the data yourself, you have to run the local script.
