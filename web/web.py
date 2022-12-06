@@ -93,8 +93,9 @@ if False:
     follows = users_info['follows']
     f.close()
 url = "https://raw.githubusercontent.com/piano-miles/Scratch-Userdata/main/web/data/users.json"
-response = urlopen(url)
-users_info = json.load(response.read())
+#response = urlopen(url)
+#users_info = json.load(response.read())
+users_info = json.load(session.get(url))
 usernames = users_info['usernames']
 follows = users_info['follows']
 c = len(follows)
