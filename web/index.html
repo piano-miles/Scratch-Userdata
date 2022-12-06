@@ -9,14 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="style.css">
-    <script src="data_load.js"></script>
     <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <script src="data_load.js" defer></script>
 </head>
 
 <body>
     <div class=container>
         <header class="header">
-            <h1 class="t1">Miles' Statistics Project</h1>
+            <h1 class="t1" id="title">Miles' Statistics Project</h1>
         </header>
         <section>
             <div class="terminal">
@@ -24,8 +24,11 @@
                     - requests
                     - tqdm
                 </py-env>
-                <py-script src="./web.py"></py-script>
+                <py-script src="./data/users.py"></py-script>
+                <py-script src="./web.py" defer></py-script>
             </div>
         </section>
     </div>
 </body>
+
+</html>

@@ -1,6 +1,7 @@
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from urllib.request import urlopen
 import json
 import time
 from tqdm import tqdm
@@ -81,15 +82,21 @@ elif platform == "win32":
     print("Running on Windows.")
 
 print('Initial working directory: ', os.getcwd())
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(os.path.dirname(os.path.abspath('__file__')))
 print('New working directory: ', os.getcwd())
 
 print('Reading users.json')
-f = open('../json/users.json')
-users_info = json.load(f)
+if False:
+    f = open('./data/users.json')  # Todo: find file
+    users_info = json.load(f)
+    usernames = users_info['usernames']
+    follows = users_info['follows']
+    f.close()
+url = "https://raw.githubusercontent.com/piano-miles/Scratch-Userdata/main/web/data/users.json"
+response = urlopen(url)
+users_info = json.load(response.read())
 usernames = users_info['usernames']
 follows = users_info['follows']
-f.close()
 c = len(follows)
 userData = []
 sampleData = []
