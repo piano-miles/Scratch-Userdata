@@ -6,7 +6,7 @@ This is a Python program to collect data about Scratch projects and users for my
 
 The code for data collection is `local/main.py`.
 
-- The code uses a lot of RAM, so make sure you have at least 4GB.
+- The code uses a lot of RAM, so make sure you have at least 4GB available.
 - After running the program, the collected data will be written to `local/dataset.csv`.
 
 ## Dependencies
