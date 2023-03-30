@@ -29,9 +29,9 @@ def jget(url, i):
         print(
             'If you are using an internet connection provided by a school or organization with heavy internet traffic control, that may be why. :)'
         )
-        print('Exception: ' + str(e))
-        print('Attmpt ' + str(i))
-        print('url: ' + url)
+        print(f'Exception: {str(e)}')
+        print(f'Attmpt {str(i)}')
+        print(f'url: {url}')
         quit()
 
     else:
@@ -48,7 +48,7 @@ def jget(url, i):
         else:
             sc = response.status_code
             print('Attempted to get data 10 times, failed.')
-            print('Error code: ' + str(sc) + '.')
+            print(f'Error code: {str(sc)}.')
             if sc == 301:
                 print('The server is redirecting you to a different endpoint.')
             elif sc == 400:
@@ -69,11 +69,11 @@ def jget(url, i):
                 print('The server is not ready to handle the request.')
             else:
                 print('Unknown error type.')
-            print('URL: ' + url)
+            print(f'URL: {url}')
             quit()
 
 
-if platform == "linux" or platform == "linux2":
+if platform in ["linux", "linux2"]:
     print("Running on Linux.")
 elif platform == "darwin":
     print("Running on MacOS.")
@@ -85,44 +85,47 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 print('New working directory: ', os.getcwd())
 
 print('Reading users.json')
-f = open('../json/users.json')
-users_info = json.load(f)
-usernames = users_info['usernames']
-follows = users_info['follows']
-f.close()
+with open('../json/users.json') as f:
+    users_info = json.load(f)
+    usernames = users_info['usernames']
+    follows = users_info['follows']
 c = len(follows)
 userData = []
 sampleData = []
 
 
 def col(K):
-    batch = 0
     username = usernames[K]
-    valid = jget(
-        'https://api.scratch.mit.edu/accounts/checkusername/' + username,
-        0)['msg'] == 'username exists'
+    valid = (
+        jget(
+            f'https://api.scratch.mit.edu/accounts/checkusername/{username}', 0
+        )['msg']
+        == 'username exists'
+    )
 
     if valid:
-        user = jget('https://api.scratch.mit.edu/users/' + username, 0)
+        user = jget(f'https://api.scratch.mit.edu/users/{username}', 0)
         projects = 40
         off = 0
 
+        batch = 0
         while projects > 39:
             i = batch | K << 10
             userData.append((i, user, follows[K]))
             sample = jget(
-                'https://api.scratch.mit.edu/users/' + username +
-                '/projects?limit=40&offset=' + str(off), 0)
+                f'https://api.scratch.mit.edu/users/{username}/projects?limit=40&offset={str(off)}',
+                0,
+            )
             sampleData.append((i, sample))
             projects = len(sample)
             off += 40
             batch += 1
 
 
-print('Creating ' + str(c) + ' Threads')
+print(f'Creating {str(c)} Threads')
 c = int(c * 0.1)
 for L in range(10):
-    print("-- Thread Batch " + str(L + 1) + "/10 --")
+    print(f"-- Thread Batch {str(L + 1)}/10 --")
     threads = []
     for K in tqdm(range(c)):
         t = threading.Thread(target=col, args=(K + L * c, ))
@@ -172,9 +175,9 @@ for K in tqdm(range(samples + 1)):
         sample = sampleData[K]
 
     else:
-        username = pusr + 'a'
+        username = f'{pusr}a'
 
-    if not pusr == username:
+    if pusr != username:
         views = str(views)
         loves = str(loves)
         favorites = str(favorites)
@@ -186,9 +189,10 @@ for K in tqdm(range(samples + 1)):
 
         if country is None:
             country = ''
-        data += pusr+','+str(userData[K-1][1])+','+country+','+joinDate+','+views+','+loves+',' + \
-            favorites+','+remixes+','+public+','+published + \
-            ','+visible+','+commentable+','+projects+'\n'
+        data += (
+            f'{pusr},{str(userData[K - 1][1])},{country},{joinDate},{views},{loves},{favorites},{remixes},{public},{published},{visible},{commentable},{projects}'
+            + '\n'
+        )
 
         views = 0
         loves = 0
@@ -222,7 +226,6 @@ for K in tqdm(range(samples + 1)):
 
     projects = str(count)
 
-f = open('dataset.csv', 'w')
-f.write(data)
-f.close()
+with open('dataset.csv', 'w') as f:
+    f.write(data)
 print('File written to dataset.csv.\nDone.')
