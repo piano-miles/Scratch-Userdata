@@ -28,7 +28,7 @@ def jget(url, log):
     else:
         sc = response.status_code
         if log:
-            print("Status: " + str(sc))
+            print(f"Status: {str(sc)}")
         if sc == 200:
             if log:
                 print("Result returned successfully.")
@@ -65,35 +65,24 @@ data = header  # format ex: "piano_miles,1000,United States,2018-08-24,1000,200,
 # https://api.scratch.mit.edu/users/mres/projects
 
 for K in range(len(follows)):
-    print(str(int(1000 * K/len(follows))/10) + "%")
+    print(f"{str(int(1000 * K / len(follows)) / 10)}%")
     username = usernames[K]
 
-    valid = jget(
-        "https://api.scratch.mit.edu/accounts/checkusername/"+username, False)["msg"] == "username exists"
+    valid = (
+        jget(
+            f"https://api.scratch.mit.edu/accounts/checkusername/{username}",
+            False,
+        )["msg"]
+        == "username exists"
+    )
 
     if valid:
-        user = jget("https://api.scratch.mit.edu/users/"+username, False)
-        if False:
-            offset = 0
-            followerc = 0
-            fcount = 20
-            followers = [" "] * 20
-            while len(followers) > 19:
-                followers = jget("https://api.scratch.mit.edu/users/" +
-                                 username+"/following?offset="+str(offset), True)
-                followerc += len(followers)
-                offset += 1
-                print("Batch: " + str(len(followers)) + "\n")
-            # print(user)
-            print("Followers: " + str(followerc))
-
+        user = jget(f"https://api.scratch.mit.edu/users/{username}", False)
         country = user["profile"]["country"]
         joinDate = user["history"]["joined"].split("T")[0]
 
-        sample = jget("https://api.scratch.mit.edu/users/" +
-                      username + "/projects", False)  # A user
+        sample = jget(f"https://api.scratch.mit.edu/users/{username}/projects", False)
 
-        views = 0
         loves = 0
         favorites = 0
         remixes = 0
@@ -103,6 +92,7 @@ for K in range(len(follows)):
         commentable = 0
         count = 0
 
+        views = 0
         for i in range(len(sample)):
             project = sample[i]
 
@@ -134,84 +124,18 @@ for K in range(len(follows)):
             visible = str(visible/count)
             commentable = str(commentable/count)
 
-            if False:
-                print(i)
-                print("count: " + str(count))
-                print("username: " + username)
-                # print(title)
-                # print(projectID)
-                print("views: " + views)
-                print("loves: " + loves)
-                print("favorites: " + favorites)
-                print("remixes: " + remixes)
-                # print(parent)
-                # print(root)
-                print("public: " + public)
-                print("published: " + published)
-                print("visible: " + visible)
-                # print(creationDate)
-                print("commentable: " + commentable)
-
-            data += username+","+follows[K].strip()+","+country+","+joinDate+","+views+","+loves + \
-                ","+favorites+","+remixes+","+public+"," + \
-                published+","+visible+","+commentable+"\n"
-        # print(data)
-        # print(remixes)
-        # print(commentable)
-        # print(visible)
+            data += (
+                f"{username},{follows[K].strip()},{country},{joinDate},{views},{loves},{favorites},{remixes},{public},{published},{visible},{commentable}"
+                + "\n"
+            )
+            # print(data)
+            # print(remixes)
+            # print(commentable)
+            # print(visible)
 
 print("Data collected\nWriting file")
-f = open("dataset.csv", "w")
-f.write(data)
-f.close()
+with open("dataset.csv", "w") as f:
+    f.write(data)
 print("Complete")
-
-
-# pprint.pprint(sample)
-
-if (False):
-    for p in featured['community_featured_projects']:
-        if p['type'] == "project":
-            creator = p['creator']
-            project_id = p['id']
-            project_title = p['title']
-            loves = p['love_count']
-
-            printl("creator",       creator)
-            printl("project_id",    project_id)
-            printl("project_title", project_title)
-            printl("loves",         loves)
-
-            # Creator info
-            q = "https://api.scratch.mit.edu/users/"+creator
-            printl("user_info <- GET", q)
-            user_info = jget(q, False)
-            printl("user_info", user_info)
-
-            # Favorited projects
-            # "https://api.scratch.mit.edu/users/"+creator+"/favorites"
-
-            # Followers
-            q = "https://api.scratch.mit.edu/users/"+creator+"/followers"
-            printl("followers <- GET", q)
-            followers = jget(q, False)
-            printl("followers", followers)
-
-            # Following
-            # "https://api.scratch.mit.edu/users/"+creator+"/following"
-
-            # Unread messages
-            # "https://api.scratch.mit.edu/users/"+creator+"/messages/count"
-
-            # Projects
-            # "https://api.scratch.mit.edu/users/"+creator+"/projects"
-
-            # Project Info
-            # "https://api.scratch.mit.edu/users/"+creator+"/projects/"+project_id
-
-            # Project Comments
-            # "https://api.scratch.mit.edu/users/"+creator+"/projects/"+project_id+"/comments"
-
-            quit()
 
         # print(jdump(pass_times))
