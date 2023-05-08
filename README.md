@@ -11,9 +11,9 @@ The code for data collection is `local/main.py`.
 
 ## Dependencies
 
-To run the code, you will need Python 3 installed. The project uses the urllib3, json, time, threading, os, sys, tqdm, and requests libraries, all but the last two of which are in Python's standard library.
+To run the code, you will need Python 3 installed. The project uses the json, time, threading, os, sys, urllib3, tqdm, and requests libraries, all but the last three of which are already in Python's standard library.
 
-To install the required dependencies, run `python3 -m pip install tqdm requests` in your commandline.
+To install the required dependencies, run `python3 -m pip install -r requirements.txt` for Unix/macOS or `py3 -m pip install -r requirements.txt` for Windows in your commandline.
 
 ## Other Files
 
